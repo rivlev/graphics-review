@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy
 import re
+import Image
 
 scores = []
 
@@ -16,7 +17,7 @@ def lax_equal(x, y):
 			str(x)
 			return x.lower().strip()==y.lower().strip()
 		except: # sloppy: assume if not float is vector
-			return abs(x-y).all() <= 0.01
+			return (abs(x-y) <= 0.01).all()
 
 def expect_float(q):
 	f = input(q)
@@ -127,17 +128,27 @@ def angleq():
 	ua = expect_float(q)
 	check_answer(a, ua, q, "angle")
 
-qtypes = {
+def point_to_pointq():
+	x = vector3()
+	y = vector3()
+	a = y - x
+	q = "What is the vector from %s to %s?\n" % (numpy.array_str(x), numpy.array_str(y))
+	ua = expect_vector(q)
+	check_answer(a, ua, q, "point to point")
+
+
+vqtypes = {
 	'r': (directionq, 'direction'), 
 	's': (vsumq, 'sum'),
 	'm': (magnitudeq, 'magnitude'),
 	'n': (normalizeq, 'normalize'),
 	'd': (dot_productq, 'dot product'),
 	'c': (cross_productq, 'cross product'),
-	'a': (angleq, 'angle')
+	'a': (angleq, 'angle'),
+	'ptp': (point_to_pointq, 'point to point'),
 }
 
-def getq(q):
+def getq(q, qtypes):
 	try:
 		x = numpy.random.randint(len(qtypes), size=int(q))	
 		for i in x:
@@ -148,7 +159,7 @@ def getq(q):
 		except KeyError:
 			print("Invalid choice")
 
-def main():
+def main(qtypes):
 	while True:
 		instructions = ["'%s' for %s" % (key, value[1]) for key, value in qtypes.items()]
 		q = input("Enter %s, a number n for an n-item quiz, or nothing to quit, and press enter\n" % ", ".join(instructions))
@@ -156,7 +167,7 @@ def main():
 			report_scores()
 			break
 		else:
-			getq(q)
+			getq(q, qtypes)
 
 if __name__ == "__main__":
-	main()
+	main(vqtypes)
