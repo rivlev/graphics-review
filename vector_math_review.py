@@ -1,7 +1,6 @@
 from collections import defaultdict
 import numpy
 import re
-import Image
 
 scores = []
 
