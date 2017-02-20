@@ -2,6 +2,7 @@ import numpy
 import vector_math_review as vmr
 from PIL import Image
 from subprocess import call
+import review
 
 def matrix4():
 	return numpy.matrix('%d %d %d %d; %d %d %d %d; %d %d %d %d; %d %d %d %d' % tuple(numpy.random.randint(-5, 5, 16)))
@@ -102,11 +103,10 @@ def rotationq(ask=True, twod=False):
 		return q, a, (ax, r)
 	
 def scaleq(ask=True, twod=False):
-	print((ask, twod))
 	axes = ('x','y','z')
 	target_axes = numpy.random.permutation(('x', 'y', 'z'))[:(numpy.random.randint(0, 3)+1)]		# randomly permute (x, y, z), then choose a random slice
 	if twod:
-		target_axes.remove('z')
+		target_axes = [a for a in target_axes if a != 'z']
 	params = { a : round(numpy.random.random()*5, 2) if a in target_axes else 1 for a in axes }
 	q = "Create a matrix to scale a point %s." % " and ".join(["%.2f along the %s-axis" % (factor, axis) for axis, factor in sorted(params.items()) if axis in target_axes])
 	a = scale_matrix(params['x'], params['y'], params['z'])
@@ -116,25 +116,31 @@ def scaleq(ask=True, twod=False):
 	else:
 		return q, a, (params['x'], params['y'], params['z'])
 
-def comboq():
+def comboq(ask=True):
 	transformations = numpy.random.permutation((translationq, rotationq, scaleq))[:numpy.random.randint(2,4)]
 	transformations = [ t(False) for t in transformations ]
 	q = "Create a matrix to %s." % ", and then ".join([qt.replace("Create a matrix to ", '')[:-1] for (qt, a, params) in transformations])
-	ua = expect_matrix(q)
 	a = numpy.eye(4)
 	for q, m, p in reversed(transformations):
 		a = a * m
-	vmr.check_answer(a, ua, q, "combo")
+	if ask:
+		ua = expect_matrix(q)
+		vmr.check_answer(a, ua, q, "combo")
+	else:
+		return q, a, transformations
 
-def pictureq():
+def pictureq(ask=True):
 	transformation = numpy.random.permutation(((translationq, "translation"), (rotationq, "rotation"), (scaleq, "scale")))[0]
 	(qt, a, params) = transformation[0](False, True)
 	q = "Create a matrix to transform the green triangle into the yellow triangle."
 	call(["Rscript", "Rcode/generate_figs.R", transformation[1]] + [str(p) for p in params])
-	with Image.open('tmp.png') as img:
-		img.show()
-		ua = expect_matrix(q)
-		vmr.check_answer(a, ua, q, "picture")
+	if ask:
+		with Image.open('tmp.png') as img:
+			img.show()
+			ua = expect_matrix(q)
+			vmr.check_answer(a, ua, q, "picture")
+	else:
+		return q, a, params
 
 tqtypes = {
 	't': (translationq, 'translation'),
@@ -145,4 +151,4 @@ tqtypes = {
 }
 
 if __name__ == "__main__":
-	vmr.main(tqtypes)
+	review.main(tqtypes)
