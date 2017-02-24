@@ -1,8 +1,7 @@
 import numpy
-import vector_math_review as vmr
+import review as rv
 from PIL import Image
 from subprocess import call
-import review
 
 def matrix4():
 	return numpy.matrix('%d %d %d %d; %d %d %d %d; %d %d %d %d; %d %d %d %d' % tuple(numpy.random.randint(-5, 5, 16)))
@@ -84,7 +83,7 @@ def translationq(ask=True, twod=False):
 	a = translation_matrix(x, y, z)
 	if ask:
 		ua = expect_matrix(q)
-		vmr.check_answer(a, ua, q, "translation")
+		rv.check_answer(a, ua, q, "translation")
 	else:
 		return q, a, (x,y,z)
 
@@ -98,7 +97,7 @@ def rotationq(ask=True, twod=False):
 	a = rotation_matrix(r, ax)
 	if ask:
 		ua = expect_matrix(q)
-		vmr.check_answer(a, ua, q, "rotation")
+		rv.check_answer(a, ua, q, "rotation")
 	else:
 		return q, a, (ax, r)
 	
@@ -112,7 +111,7 @@ def scaleq(ask=True, twod=False):
 	a = scale_matrix(params['x'], params['y'], params['z'])
 	if ask:
 		ua = expect_matrix(q)
-		vmr.check_answer(a, ua, q, "scale")
+		rv.check_answer(a, ua, q, "scale")
 	else:
 		return q, a, (params['x'], params['y'], params['z'])
 
@@ -125,7 +124,7 @@ def comboq(ask=True):
 		a = a * m
 	if ask:
 		ua = expect_matrix(q)
-		vmr.check_answer(a, ua, q, "combo")
+		rv.check_answer(a, ua, q, "combo")
 	else:
 		return q, a, transformations
 
@@ -138,7 +137,7 @@ def pictureq(ask=True):
 		with Image.open('tmp.png') as img:
 			img.show()
 			ua = expect_matrix(q)
-			vmr.check_answer(a, ua, q, "picture")
+			rv.check_answer(a, ua, q, "picture")
 	else:
 		return q, a, params
 
@@ -151,4 +150,4 @@ tqtypes = {
 }
 
 if __name__ == "__main__":
-	review.main(tqtypes)
+	rv.main(tqtypes)
