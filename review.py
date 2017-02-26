@@ -7,6 +7,15 @@ scores = []
 def vector3():
 	return numpy.random.randint(-5, 5, 3)
 
+def blank():
+	return '__________'
+
+def choose_random_from(v):
+	if type(v)=='str':
+		return v
+	return v[numpy.random.randint(len(v))]
+
+
 def lax_equal(x, y):
 	try:
 		float(x)
@@ -42,9 +51,35 @@ def expect_categorical(q, t):
 		v = input("Please enter one of the following: %s\n" % ", ".join(t))
 	return v
 
-def check_answer(a, ua, q, qt):
+def matrix4():
+	return numpy.matrix('%d %d %d %d; %d %d %d %d; %d %d %d %d; %d %d %d %d' % tuple(numpy.random.randint(-5, 5, 16)))
+
+def expect_matrix(q):
+	print(q)
+	instructions = "Please enter the matrix with columns separated by spaces and rows separated by newlines.\n"
+	while True:
+		try:
+			print(instructions)
+			ua = []
+			while len(ua) < 4:
+				line = input().strip().split()
+				if (len(line)>0):
+					ua.append(line)
+			ua = numpy.matrix([[float(x) for x in elts] for elts in ua])
+			if ua.shape != (4,4):
+				print("Matrix must have 4 rows and 4 columns.")
+				continue
+			return ua
+		except:
+			print("Invalid input.")
+		
+def mxstr(m):
+	"\n".join([" ".join(str(e) for e in elts) for elts in m])
+
+
+def check_answer(a, ua, q, qt, eqfn=lax_equal):
 	s = 0
-	if lax_equal(ua, a):
+	if eqfn(ua, a):
 		print("Correct")
 		s = 1
 	else:
@@ -120,7 +155,7 @@ def getq(q, qtypes):
 def main(qtypes):
 	while True:
 		instructions = ["'%s' for %s" % (key, value[1]) for key, value in qtypes.items()]
-		q = input("Enter %s, a number n for an n-item quiz, 'review' to save a pdf quiz, or nothing to quit, and press enter " % ", ".join(instructions))
+		q = input("Enter %s, a number n for an n-item quiz, 'review' to save a pdf quiz, or nothing to quit, and press enter \n" % ", ".join(instructions))
 		if q == '':
 			report_scores()
 			break

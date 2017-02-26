@@ -1,27 +1,7 @@
 import numpy
 import review as rv
 from PIL import Image
-from subprocess import call
-
-def matrix4():
-	return numpy.matrix('%d %d %d %d; %d %d %d %d; %d %d %d %d; %d %d %d %d' % tuple(numpy.random.randint(-5, 5, 16)))
-
-def expect_matrix(q):
-	print(q)
-	instructions = "Please enter the matrix with columns separated by spaces and rows separated by newlines.\n"
-	while True:
-		try:
-			print(instructions)
-			ua = []
-			while len(ua) < 4:
-				ua.append(input().strip().split())
-			return numpy.matrix([[float(x) for x in elts] for elts in ua])
-		except:
-			print("Invalid input.")
-		
-def mxstr(m):
-	"\n".join([" ".join(str(e) for e in elts) for elts in m])
-	
+from subprocess import call	
 
 def translation_matrix(dx, dy, dz):
 	return numpy.matrix([[1, 0, 0, dx], [0, 1, 0, dy], [0, 0, 1, dz], [0, 0, 0, 1]])
@@ -82,7 +62,7 @@ def translationq(ask=True, twod=False):
 	q = "Create a matrix to %s." % qtext(("translation", {'x':x, 'y':y, 'z':z}))
 	a = translation_matrix(x, y, z)
 	if ask:
-		ua = expect_matrix(q)
+		ua = vmr.expect_matrix(q)
 		rv.check_answer(a, ua, q, "translation")
 	else:
 		return q, a, (x,y,z)
@@ -96,7 +76,7 @@ def rotationq(ask=True, twod=False):
 	q = "Create a matrix to %s." % qtext(("rotation", r, ax))
 	a = rotation_matrix(r, ax)
 	if ask:
-		ua = expect_matrix(q)
+		ua = vmr.expect_matrix(q)
 		rv.check_answer(a, ua, q, "rotation")
 	else:
 		return q, a, (ax, r)
@@ -110,7 +90,7 @@ def scaleq(ask=True, twod=False):
 	q = "Create a matrix to scale a point %s." % " and ".join(["%.2f along the %s-axis" % (factor, axis) for axis, factor in sorted(params.items()) if axis in target_axes])
 	a = scale_matrix(params['x'], params['y'], params['z'])
 	if ask:
-		ua = expect_matrix(q)
+		ua = vmr.expect_matrix(q)
 		rv.check_answer(a, ua, q, "scale")
 	else:
 		return q, a, (params['x'], params['y'], params['z'])
@@ -123,7 +103,7 @@ def comboq(ask=True):
 	for q, m, p in reversed(transformations):
 		a = a * m
 	if ask:
-		ua = expect_matrix(q)
+		ua = vmr.expect_matrix(q)
 		rv.check_answer(a, ua, q, "combo")
 	else:
 		return q, a, transformations
@@ -136,7 +116,7 @@ def pictureq(ask=True):
 	if ask:
 		with Image.open('tmp.png') as img:
 			img.show()
-			ua = expect_matrix(q)
+			ua = vmr.expect_matrix(q)
 			rv.check_answer(a, ua, q, "picture")
 	else:
 		return q, a, params
