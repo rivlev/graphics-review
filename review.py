@@ -7,6 +7,9 @@ scores = []
 def vector3():
 	return numpy.random.randint(-5, 5, 3)
 
+def vector(n=3):
+	return numpy.random.randint(-5, 5, n)
+
 def blank():
 	return '__________'
 
@@ -35,15 +38,15 @@ def expect_float(q):
 		except ValueError:
 			f = input("Invalid answer, please enter a number\n")
 
-def expect_vector(q):
+def expect_vector(q, dim=3):
 	print(q)
-	v = input("Enter answer in the form x y z\n")
+	v = input("Enter answer in the form %s\n" % ' '.join(["v%d" % i for i in range(dim)]))
 	while True:
 		try:
-			x, y, z = v.strip().split()
-			return (float(x), float(y), float(z))
+			elts = v.strip().split()
+			return [float(e) for e in elts]
 		except:
-			v = input("Invalid answer, please answer in the form x y z\n")
+			v = input("Invalid answer, please answer in the form %s\n" % ' '.join(["v%d" % i for i in range(dim)]))
 
 def expect_categorical(q, t):
 	v = input(q)
@@ -108,6 +111,7 @@ def latex_preamble_str():
 	return (
 		r"\documentclass[11pt]{article}"
 		r"\usepackage{graphicx}"
+		r"\usepackage{underscore}"
 		r"\newcommand{\rmatrix}[1]{\begin{bmatrix}#1\end{bmatrix}}"
 		r"\begin{document}"
 		r"\begin{enumerate}"

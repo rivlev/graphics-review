@@ -67,7 +67,7 @@ def translationq(ask=True, twod=False):
 	else:
 		return q, a, (x,y,z)
 
-def rotationq(ask=True, twod=False):
+def rotationq(ask=True, twod=True):
 	r = numpy.round(numpy.random.random() + numpy.random.random(), 2)
 	if twod:
 		ax = 'z'
