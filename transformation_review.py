@@ -62,7 +62,7 @@ def translationq(ask=True, twod=False):
 	q = "Create a matrix to %s." % qtext(("translation", {'x':x, 'y':y, 'z':z}))
 	a = translation_matrix(x, y, z)
 	if ask:
-		ua = vmr.expect_matrix(q)
+		ua = rv.expect_matrix(q)
 		rv.check_answer(a, ua, q, "translation")
 	else:
 		return q, a, (x,y,z)
@@ -76,7 +76,7 @@ def rotationq(ask=True, twod=True):
 	q = "Create a matrix to %s." % qtext(("rotation", r, ax))
 	a = rotation_matrix(r, ax)
 	if ask:
-		ua = vmr.expect_matrix(q)
+		ua = rv.expect_matrix(q)
 		rv.check_answer(a, ua, q, "rotation")
 	else:
 		return q, a, (ax, r)
@@ -90,7 +90,7 @@ def scaleq(ask=True, twod=False):
 	q = "Create a matrix to scale a point %s." % " and ".join(["%.2f along the %s-axis" % (factor, axis) for axis, factor in sorted(params.items()) if axis in target_axes])
 	a = scale_matrix(params['x'], params['y'], params['z'])
 	if ask:
-		ua = vmr.expect_matrix(q)
+		ua = rv.expect_matrix(q)
 		rv.check_answer(a, ua, q, "scale")
 	else:
 		return q, a, (params['x'], params['y'], params['z'])
@@ -103,7 +103,7 @@ def comboq(ask=True):
 	for q, m, p in reversed(transformations):
 		a = a * m
 	if ask:
-		ua = vmr.expect_matrix(q)
+		ua = rv.expect_matrix(q)
 		rv.check_answer(a, ua, q, "combo")
 	else:
 		return q, a, transformations
@@ -116,7 +116,7 @@ def pictureq(ask=True):
 	if ask:
 		with Image.open('tmp.png') as img:
 			img.show()
-			ua = vmr.expect_matrix(q)
+			ua = rv.expect_matrix(q)
 			rv.check_answer(a, ua, q, "picture")
 	else:
 		return q, a, params
