@@ -4,7 +4,7 @@ import review as rv
 
 def magnitudeq():
 	x = rv.vector3()
-	a = rv.magnitude(x)
+	a = gf.magnitude(x)
 	q = "||%s||\n" % numpy.array_str(x)
 	ua = rv.expect_float(q)
 	rv.check_answer(a, ua, q, "magnitude")
@@ -19,7 +19,7 @@ def vsumq():
 
 def normalizeq():
 	x = rv.vector3()
-	a = rv.normalize(x)
+	a = gf.normalize(x)
 	q = "normalize %s" % numpy.array_str(x)
 	ua = rv.expect_vector(q)
 	rv.check_answer(a, ua, q, "normalize")
@@ -55,7 +55,7 @@ def directionq():
 def angleq():
 	x = rv.vector3()
 	y = rv.vector3()
-	a = numpy.arccos(rv.normalize(x).dot(rv.normalize(y)))
+	a = numpy.arccos(gf.normalize(x).dot(gf.normalize(y)))
 	q = "What is the angle between the following two vectors (in radians)?\n %s, %s\n" % (numpy.array_str(x), numpy.array_str(y))
 	ua = rv.expect_float(q)
 	rv.check_answer(a, ua, q, "angle")

@@ -47,9 +47,9 @@ def cameraq(ask=True):
 	q = "Given a camera position of %s, a gaze vector of %s, and an up vector of %s, what is the resulting camera transformation matrix?" % (numpy.array_str(eye), numpy.array_str(gaze), numpy.array_str(up))
 
 	# derive answer
-	w = -rv.normalize(gaze)
-	u = rv.normalize(numpy.cross(up, w))
-	v = rv.normalize(numpy.cross(w, u))
+	w = -gf.normalize(gaze)
+	u = gf.normalize(numpy.cross(up, w))
+	v = gf.normalize(numpy.cross(w, u))
 	a = numpy.matrix([
 		[u[0], u[1], u[2], eye[0]],
 		[v[0], v[1], v[2], eye[1]],
@@ -150,8 +150,14 @@ def orthomatrix(t, b, r, l, n, f):
 
 def orthoq(ask=True):
 	(t, b, r, l, n, f) = rv.vector(6)
+	if t==b:
+		t = t+1
+	if r==l:
+		r = r+1
+	if n==f:
+		n = n+1
 	a = orthomatrix(t, b, r, l, n, f)
-	q = "Create a matrix to transform a paralleliped defined by t=%d, b=%d, r=%d, l=%d, n=%d, and f=%d into the canonical view volume (an orthographic projection matrix." % (t, b, r, l, n, f)
+	q = "Create a matrix to transform a paralleliped defined by t=%d, b=%d, r=%d, l=%d, n=%d, and f=%d into the canonical view volume (an orthographic projection matrix)." % (t, b, r, l, n, f)
 	
 	if ask:
 		ua = rv.expect_matrix(q)

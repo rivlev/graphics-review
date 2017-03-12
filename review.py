@@ -1,6 +1,7 @@
-import numpy.random
+import numpy
 import codecs
 from collections import defaultdict
+import graphicsFunctions as gf
 
 scores = []
 
@@ -10,6 +11,15 @@ def vector3():
 def vector(n=3):
 	return numpy.random.randint(-5, 5, n)
 
+def color():
+	c = vector3()
+	if (max(c)==0):
+		c[numpy.random.randint(len(c))]=1
+	return numpy.array([round(abs(cc/max(c)), 1) for cc in c])
+
+def direction():
+	return gf.normalize(vector3())
+
 def blank():
 	return '__________'
 
@@ -18,6 +28,8 @@ def choose_random_from(v):
 		return v
 	return v[numpy.random.randint(len(v))]
 
+def tostring(x):
+	return numpy.array_str(numpy.array(x))
 
 def lax_equal(x, y):
 	try:
@@ -101,16 +113,12 @@ def report_scores():
 	for qt in qtype_score.keys():
 		print("%s: %.2f (%d / %d)" % (qt, qtype_score[qt]/qtype_count[qt], qtype_score[qt], qtype_count[qt]))
 
-def magnitude(v):
-	return numpy.sqrt(v.dot(v))
-
-def normalize(v):
-	return v / magnitude(v)
 
 def latex_preamble_str():
 	return (
 		r"\documentclass[11pt]{article}"
 		r"\usepackage{graphicx}"
+		r"\usepackage[margin=1in]{geometry}"
 		r"\usepackage{underscore}"
 		r"\newcommand{\rmatrix}[1]{\begin{bmatrix}#1\end{bmatrix}}"
 		r"\begin{document}"
@@ -126,7 +134,7 @@ def latex_question(q, a, params):
 	pstr = ''
 	if 'green' in q:		# hacky: this tells us it is picture question
 		pstr = r"\includegraphics[width=0.5\textwidth]{tmp}\\"
-	return r"\item %s%s" % (pstr,q), a
+	return r"\item %s%s" % (pstr,q.replace('\n', r'\\')), a
 
 def generate_quiz(qtypes, n):
 	with codecs.open("quiz%s.tex" % n, 'w', 'utf-8') as qfile, codecs.open("answer%s.tex" % n, 'w', 'utf-8') as afile:
@@ -137,7 +145,8 @@ def generate_quiz(qtypes, n):
 			(q, a, params) = list(qtypes.values())[x][0](False)
 			qstr, astr = latex_question(q, a, params)
 			qfile.write(qstr)
-			afile.write(r"%s\\%s" % (qstr, astr))
+			qfile.write('\n')
+			afile.write(r"%s\\%s\n" % (qstr, astr))
 		qfile.write(latex_wrapup_str())
 		afile.write(latex_wrapup_str())
 

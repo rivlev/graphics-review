@@ -199,10 +199,16 @@ circleSlice <- function(center=c(0,0), diameter=1, npoints=100, xstart=-0.5, xen
 	c = circleFun(center, diameter, npoints)
 	return(c[c$x >= xstart & c$x < xend & c$y >= ystart & c$y < yend,])
 }
-  
+ 
+getNormal <- function(a, b, c) {
+	u <- b - a
+	v <- c - a
+	normalize(cross(u, v))
+} 
 
 
 # quiz functions
 vtext <- function(v, c=" ") {
 	paste(v, collapse=c)
 }
+

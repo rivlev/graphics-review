@@ -2,3 +2,4 @@ __pycache__
 .R*
 *.log
 *.png
+*.swp
