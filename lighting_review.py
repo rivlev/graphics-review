@@ -32,8 +32,8 @@ def normalq(ask=True):
 def diffuseq(ask=True):
 	cl = rv.color()
 	cr = rv.color()
-	ld = gf.normalize(rv.vector3())
-	normal = gf.normalize(rv.vector3())
+	ld = rv.direction()
+	normal = rv.direction()
 	q = "Point p has a surface color of %s and a surface normal of %s. Given a light of color %s and direction %s, what will be the diffuse component of p's final color?" % (rv.tostring(cr), rv.tostring(normal), rv.tostring(cl), rv.tostring(ld))
 	a = cl * cr * max((0, ld.dot(normal)))
 	if ask:
@@ -44,9 +44,9 @@ def diffuseq(ask=True):
 
 def specularq(ask=True):
 	cl = rv.color()
-	ld = gf.normalize(rv.vector3())
+	ld = rv.direction()
 	cr = rv.color()
-	normal = gf.normalize(rv.vector3())
+	normal = rv.direction()
 	r = gf.reflect(ld, normal)
 	e = gf.normalize(rv.vector3())
 	p = 2

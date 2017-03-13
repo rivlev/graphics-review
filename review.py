@@ -2,8 +2,13 @@ import numpy
 import codecs
 from collections import defaultdict
 import graphicsFunctions as gf
+import csv
 
 scores = []
+
+with open('unit_ish_vectors.csv', 'r') as f:
+	directions = list(csv.reader(f))[1:]	# skip header
+	directions = [[float(f) for f in line] for line in directions]
 
 def vector3():
 	return numpy.random.randint(-5, 5, 3)
@@ -18,7 +23,9 @@ def color():
 	return numpy.array([round(abs(cc/max(c)), 1) for cc in c])
 
 def direction():
-	return gf.normalize(vector3())
+	d = numpy.array(choose_random_from(directions)[0:3])
+	print("Note: to simplify calculations, directions are chosen to have components of only two decimal places and magnitudes very close (within 0.001) to 1. You can treat them in your calculations as unit vectors.")
+	return numpy.random.permutation(d)
 
 def blank():
 	return '__________'
