@@ -1,6 +1,7 @@
 import review as rv
 import numpy
 import itertools
+import graphicsFunctions as gf
 
 def part_of_str_answer_is_in_choices(ua, a):
 	ua = ua.lower().strip()
