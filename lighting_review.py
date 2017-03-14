@@ -17,17 +17,17 @@ def ldirq(ask=True):
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "light direction")
 	else:
-		return q, a
+		return q, a, ()
 
 def normalq(ask=True):
-	vertices = [rv.vector3() for _ in xrange(3)]
+	vertices = [rv.vector3() for _ in range(3)]
 	q = "What is the normal to a triangle defined by vertices %s, %s, and %s (listed in the order of positive rotation)?" % [numpy.array_str(p) for p in vertices]
 	a = gf.getNormal(vertices)
 	if ask:
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "normal")
 	else:
-		return q, a
+		return q, a, ()
 
 def diffuseq(ask=True):
 	cl = rv.color()
@@ -40,7 +40,7 @@ def diffuseq(ask=True):
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "diffuse")
 	else:
-		return q, a
+		return q, a, ()
 
 def specularq(ask=True):
 	cl = rv.color()
@@ -58,7 +58,7 @@ def specularq(ask=True):
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "specular")
 	else:
-		return q, a
+		return q, a, ()
 
 def totalq(ask=True):
 	(cr, normal, cl, ld, ed, ca) = (rv.color(), rv.direction(), rv.color(), rv.direction(), rv.direction(), rv.color())
