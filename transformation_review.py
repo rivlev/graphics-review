@@ -98,15 +98,15 @@ def scaleq(ask=True, twod=False):
 def comboq(ask=True):
 	transformations = numpy.random.permutation((translationq, rotationq, scaleq))[:numpy.random.randint(2,4)]
 	transformations = [ t(False) for t in transformations ]
-	q = "Create a matrix to %s." % ", and then ".join([qt.replace("Create a matrix to ", '')[:-1] for (qt, a, params) in transformations])
+	tq = "Create a matrix to %s." % ", and then ".join([qt.replace("Create a matrix to ", '')[:-1] for (qt, a, params) in transformations])
 	a = numpy.eye(4)
 	for q, m, p in reversed(transformations):
 		a = a * m
 	if ask:
-		ua = rv.expect_matrix(q)
-		rv.check_answer(a, ua, q, "combo")
+		ua = rv.expect_matrix(tq)
+		rv.check_answer(a, ua, tq, "combo")
 	else:
-		return q, a, transformations
+		return tq, a, transformations
 
 def pictureq(ask=True):
 	transformation = numpy.random.permutation(((translationq, "translation"), (rotationq, "rotation"), (scaleq, "scale")))[0]
