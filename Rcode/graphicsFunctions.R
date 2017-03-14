@@ -206,6 +206,10 @@ getNormal <- function(a, b, c) {
 	normalize(cross(u, v))
 } 
 
+reflect <- function(v, normal) {
+	2 * normal * dot(v, normal) - v
+}
+
 
 # quiz functions
 vtext <- function(v, c=" ") {
