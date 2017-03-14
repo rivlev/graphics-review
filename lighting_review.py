@@ -21,7 +21,7 @@ def ldirq(ask=True):
 
 def normalq(ask=True):
 	vertices = [rv.vector3() for _ in range(3)]
-	q = "What is the normal to a triangle defined by vertices %s, %s, and %s (listed in the order of positive rotation)?" % [numpy.array_str(p) for p in vertices]
+	q = "What is the normal to a triangle defined by vertices %s, %s, and %s (listed in the order of positive rotation)?" % tuple(numpy.array_str(p) for p in vertices)
 	a = gf.getNormal(vertices)
 	if ask:
 		ua = rv.expect_vector(q)
@@ -48,7 +48,7 @@ def specularq(ask=True):
 	cr = rv.color()
 	normal = rv.direction()
 	r = gf.reflect(ld, normal)
-	e = gf.normalize(rv.vector3())
+	e = rv.direction()
 	p = 2
 
 	q = "Point p has a surface color of %s and a surface normal of %s. Given a light of color %s and direction %s, and a view direction %s, what will be the specular component of p's final color, with a Phong exponent of %d?" % (numpy.array_str(cr), numpy.array_str(normal), numpy.array_str(cl), numpy.array_str(ld), numpy.array_str(e), p)
@@ -69,6 +69,8 @@ def totalq(ask=True):
 	if ask:
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "total")
+	else:
+		return q, a, ()
 
 qtypes = {
 	'l': (ldirq, 'light direction'),
