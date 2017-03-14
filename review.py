@@ -3,8 +3,14 @@ import codecs
 from collections import defaultdict
 import graphicsFunctions as gf
 import csv
+import re
 
 scores = []
+
+test_strings = [0.321, """[[ 0.          0.70710678 -0.70710678  4.        ]
+  [ 0.94280904 -0.23570226 -0.23570226 -1.        ]
+  [-0.33333333 -0.66666667 -0.66666667 -4.        ]
+  [ 0.          0.          0.          1.        ]]""", "[-0.33333333 -0.66666667 -0.66666667 -4.        ]", [numpy.random.random() for i in range(10)], [[numpy.random.random() for j in range(4)] for i in range(4)]]
 
 with open('unit_ish_vectors.csv', 'r') as f:
 	directions = list(csv.reader(f))[1:]	# skip header
@@ -127,7 +133,8 @@ def latex_preamble_str():
 		r"\usepackage{graphicx}"
 		r"\usepackage[margin=1in]{geometry}"
 		r"\usepackage{underscore}"
-		r"\newcommand{\rmatrix}[1]{\begin{bmatrix}#1\end{bmatrix}}"
+    r"\usepackage{amsmath}"
+		r"\newcommand{\rmatrix}[1]{$\begin{bmatrix}#1\end{bmatrix}$}"
 		r"\begin{document}"
 		r"\begin{enumerate}"
 	)
@@ -137,11 +144,40 @@ def latex_wrapup_str():
 		r"\end{enumerate}\end{document}"
 	)
 
+def list_to_latex(m):
+  if len(numpy.array(m).shape)==1:
+    m = [m]
+  if isinstance(m, numpy.matrix):
+    m = m.tolist()
+  return r"\rmatrix{%s}" % r'\\'.join('&'.join(str(numpy.round(ac, 2)) for ac in a) for a in m)
+
+def array_str_to_latex(s):
+  return list_to_latex(a.replace('[','').replace(']', '').split() for a in re.compile(r"(\[.+?\])").findall(s))
+
+def array_regex_to_latex(mg):
+	return array_str_to_latex(mg.group(0))
+
+def latex_clean(s):
+  if isinstance(s, float):
+    return str(round(s, 2))
+  if isinstance(s, list) or isinstance(s, tuple):
+    return " OR ".join(s)
+  if isinstance(s, numpy.ndarray):
+    return list_to_latex(s)
+  if isinstance(s, str):
+    if s.strip().startswith('[') and s.strip().endswith(']'):
+      return re.sub(r"(?P<array>\[.+?\])", array_regex_to_latex, s)
+    print(s)
+    return s
+  print("error: type not handled")
+  print(type(s))
+  print(s)
+
 def latex_question(q, a, params):
-	pstr = ''
-	if 'green' in q:		# hacky: this tells us it is picture question
-		pstr = r"\includegraphics[width=0.5\textwidth]{tmp}\\"
-	return r"\item %s%s" % (pstr,q.replace('\n', r'\\')), a
+  pstr = ''
+  if 'green' in q:		# hacky: this tells us it is picture question
+    pstr = r"\includegraphics[width=0.5\textwidth]{tmp}\\"
+  return r" \item %s%s" % (pstr,latex_clean(q)), r" \item %s" % latex_clean(a)
 
 def generate_quiz(qtypes, n):
 	with codecs.open("quiz%s.tex" % n, 'w', 'utf-8') as qfile, codecs.open("answer%s.tex" % n, 'w', 'utf-8') as afile:
@@ -153,7 +189,7 @@ def generate_quiz(qtypes, n):
 			qstr, astr = latex_question(q, a, params)
 			qfile.write(qstr)
 			qfile.write('\n')
-			afile.write(r"%s\\%s\n" % (qstr, astr))
+			afile.write(astr)
 		qfile.write(latex_wrapup_str())
 		afile.write(latex_wrapup_str())
 

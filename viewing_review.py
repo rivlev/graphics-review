@@ -138,7 +138,7 @@ def perspectiveq(ask=True):
 		rv.check_answer(a2, ua2, q2, "perspective.b")
 	else:
 		finalq = r"%s\\a) %s\\b) %s" % (q, q1, q2)
-		finala = r"a) %s \\ b) %s"
+		finala = r"a) %s \\ b) %s" % (a1, a2)
 		return finalq, finala, ()
 
 def orthomatrix(t, b, r, l, n, f):
