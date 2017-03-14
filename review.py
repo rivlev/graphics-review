@@ -152,26 +152,28 @@ def list_to_latex(m):
   return r"\rmatrix{%s}" % r'\\'.join('&'.join(str(numpy.round(ac, 2)) for ac in a) for a in m)
 
 def array_str_to_latex(s):
-  return list_to_latex(a.replace('[','').replace(']', '').split() for a in re.compile(r"(\[.+?\])").findall(s))
+  return list_to_latex([float(ac) for a in re.compile(r"(\[.+?\])").findall(s) for ac in a.replace('[','').replace(']', '').split()])
 
 def array_regex_to_latex(mg):
 	return array_str_to_latex(mg.group(0))
 
+def latex_clean_str(s):
+  return s.replace("\n", '')
+
 def latex_clean(s):
-  if isinstance(s, float):
-    return str(round(s, 2))
-  if isinstance(s, list) or isinstance(s, tuple):
-    return " OR ".join(s)
-  if isinstance(s, numpy.ndarray):
-    return list_to_latex(s)
-  if isinstance(s, str):
-    if s.strip().startswith('[') and s.strip().endswith(']'):
+  try:
+    return str(round(float(s), 2))
+  except:
+    if isinstance(s, list) or isinstance(s, tuple):
+      return " OR ".join(s)
+    if isinstance(s, numpy.ndarray):
+      return list_to_latex(s)
+    if isinstance(s, str):
+      s = s.replace("\n", '')
       return re.sub(r"(?P<array>\[.+?\])", array_regex_to_latex, s)
+    print("error: type not handled")
+    print(type(s))
     print(s)
-    return s
-  print("error: type not handled")
-  print(type(s))
-  print(s)
 
 def latex_question(q, a, params):
   pstr = ''
@@ -184,8 +186,7 @@ def generate_quiz(qtypes, n):
 		qfile.write(latex_preamble_str())
 		afile.write(latex_preamble_str())
 		for i in range(int(n)):
-			x = numpy.random.randint(len(qtypes))
-			(q, a, params) = list(qtypes.values())[x][0](False)
+			(q, a, params) = choose_random_from(list(qtypes.values()))[0](False)
 			qstr, astr = latex_question(q, a, params)
 			qfile.write(qstr)
 			qfile.write('\n')
