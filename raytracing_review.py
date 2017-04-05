@@ -48,15 +48,15 @@ def triangleq(ask=True):
 	else:
 		finalq = r"%s\\a) %s\\b) %s\\c) %s" % (q, q1, q2, q3)
 		finala = r"a) %s \\b) %s \\c) %s" % (numpy.array_str(a1), a2, a3)
-		return finalq, finala
+		return finalq, finala, ()
 
 def polygonq(ask=True):
 	p, n = gf.plane()
 	vertices = gf.polygon(p, n)
 	if rv.coinflip(0.5):
-		px = gf.pointProbablyInPlane(vertices)
+		px = gf.pointProbablyInPolygon(vertices)
 	else:
-		px = gf.pointNotInPlane(vertices)
+		px = gf.pointNotInPolygon(vertices)
 	e, d = gf.rayToPoint(px)
 
 	q = "Ray R has starting point e=%s and direction d=%s.\n Polygon P has vertices \n%s." % (numpy.array_str(e), numpy.array_str(d), '\n'.join(numpy.array_str(v) for v in vertices))
@@ -89,7 +89,7 @@ def polygonq(ask=True):
 		ua5 = rv.expect_yesno(q5)
 		rv.check_answer(a5, ua5, q5, "ray distance", rv.bool_check)
 	else:
-		return rv.combine((q, q1, q2, q3, q4, q5)), rv.combine((a1, a2, a3, a4,a5), False)
+		return rv.combine((q, q1, q2, q3, q4, q5)), rv.combine((a1, a2, a3, a4,a5), False), ()
 
 def lineq(ask=True):
 	p0 = rv.vector3()
@@ -101,7 +101,7 @@ def lineq(ask=True):
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "line equation", rv.vector_check)
 	else:
-		return q, a
+		return q, a, ()
 
 def barycentricq(ask=True):
 	triangle = gf.triangle()
@@ -132,7 +132,7 @@ def barycentricq(ask=True):
 			ua3 = rv.expect_vector(q3)
 			rv.check_answer(a3, ua3, q3, "barycentric mixing", rv.vector_check)
 	else:
-		return rv.combine(q1, q2, q3), rv.combine(a1, a2, a3)
+		return rv.combine(q1, q2, q3), rv.combine(a1, a2, a3), ()
 
 def rayq(ask=True):
 	# camera frame
@@ -182,7 +182,7 @@ def rayq(ask=True):
 		ua = rv.expect_vector("direction:")
 		rv.check_answer(ua, d, rv.vector_check, "ray casting: direction")
 	else:
-		return q, (o, d)
+		return q, (o, d), ()
 
 
 qtypes = {

@@ -38,8 +38,8 @@ def xIntersect(v0, v1, y):
 	return (-B*y-C)/A
 
 def getBarycentricCoordinates(triangle, p):
-	a, b, c, fab = lineEq(triangle[0], triangle[1])
-	a, b, c, fac = lineEq(triangle[0], triangle[2])
+	coef, fab = lineEq(triangle[0], triangle[1])
+	coef, fac = lineEq(triangle[0], triangle[2])
 	beta = fac(p)/fac(triangle[1])
 	gamma = fab(p)/fab(triangle[2])
 	return numpy.array((1-beta-gamma, beta, gamma))
