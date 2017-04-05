@@ -4,6 +4,8 @@ from collections import defaultdict
 import graphicsFunctions as gf
 import csv
 import re
+from string import ascii_lowercase
+import pickle
 
 scores = []
 
@@ -17,10 +19,10 @@ with open('unit_ish_vectors.csv', 'r') as f:
 	directions = [[float(f) for f in line] for line in directions]
 
 def vector3():
-	return numpy.random.randint(-5, 5, 3)
+	return vector(3)
 
 def vector(n=3):
-	return numpy.random.randint(-5, 5, n)
+	return numpy.round(numpy.random.randint(-5, 5, n), 2)
 
 def color():
 	c = vector3()
@@ -41,6 +43,9 @@ def choose_random_from(v):
 		return v
 	return v[numpy.random.randint(len(v))]
 
+def coinflip(p):
+	return numpy.random.random() < p
+
 def tostring(x):
 	return numpy.array_str(numpy.array(x))
 
@@ -53,7 +58,20 @@ def lax_equal(x, y):
 			str(x)
 			return x.lower().strip()==y.lower().strip()
 		except: # sloppy: assume if not float is vector
+			x = numpy.array(x)
+			y = numpy.array(y)
 			return (abs(x-y) <= 0.01).all()
+
+def vector_check(a, ua):
+	a = numpy.array(a)
+	ua = numpy.array(ua)
+	return (abs(a-ua)<=0.01).all()
+
+def float_check(a, ua):
+	return abs(a-ua) <= 0.01
+
+def bool_check(a, ua):
+	return a==ua
 
 def expect_float(q):
 	f = input(q)
@@ -69,6 +87,8 @@ def expect_vector(q, dim=3):
 	while True:
 		try:
 			elts = v.strip().split()
+			if len(elts) < dim:
+				raise Exception
 			return [float(e) for e in elts]
 		except:
 			v = input("Invalid answer, please answer in the form %s\n" % ' '.join(["v%d" % i for i in range(dim)]))
@@ -78,6 +98,17 @@ def expect_categorical(q, t):
 	while v.strip() not in t:
 		v = input("Please enter one of the following: %s\n" % ", ".join(t))
 	return v
+
+def expect_yesno(q):
+	expect_boolish(q, {'y':True, 'n':False})
+
+def expect_boolish(q, choices):
+	print(q)
+	instructions = "Please enter '%s' or '%s'\n" % tuple(choices.keys())
+	while True:
+		a = input(instructions)
+		if a.lower() in choices:
+			return choices[a.lower()]
 
 def matrix4():
 	return numpy.matrix('%d %d %d %d; %d %d %d %d; %d %d %d %d; %d %d %d %d' % tuple(numpy.random.randint(-5, 5, 16)))
@@ -103,6 +134,10 @@ def expect_matrix(q):
 		
 def mxstr(m):
 	"\n".join([" ".join(str(e) for e in elts) for elts in m])
+
+def combine(strs, skipFirst=True):
+	enum = ["%s) strs[i]" % ascii_lowercase[i] if not skipFirst or i > 0 else strs[i] for i in range(len(strs))]
+	return r'\\'.join(enum)
 
 
 def check_answer(a, ua, q, qt, eqfn=lax_equal):
@@ -193,6 +228,22 @@ def generate_quiz(qtypes, n):
 			afile.write(astr)
 		qfile.write(latex_wrapup_str())
 		afile.write(latex_wrapup_str())
+
+def add_to_quiz(fname, qtype):
+	with codecs.open("%s.tex" % fname, 'a', 'utf-8') as qfile, codecs.open("%s.answers.tex" % fname, 'a', 'utf-8') as afile:
+		(q, a) = latex_question(*qtype(False))
+		qfile.write(q)
+		afile.write(q)
+		afile.write(a.replace(r"\item", r"\emph{Answer:}"))
+
+def writeModule(vs):
+	with open('current.pkl', 'wb') as f:
+		pickle.dump(vs, f)
+
+def loadModule(fname='current.pkl'):
+	with open(fname, 'rb') as f:
+		d = pickle.load(f)
+	return d
 
 def getq(q, qtypes):
 	if (q == "review"):
