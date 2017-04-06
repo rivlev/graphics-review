@@ -15,7 +15,7 @@ def triangleq(ask=True):
 
 	q = "Triangle T has vertices p0=%s, p1=%s, p2=%s. Ray R has starting point e=%s and direction d=%s." % tuple(numpy.array_str(s) for s in tuple(vertices) + (e, d))
 
-	q1 = "What are the β and 𝛾 barycentric coordinates and the t distance along the ray of the intersection between R and the plane defined by T?"
+	q1 = "What are the beta and gamma barycentric coordinates and the t distance along the ray of the intersection between R and the plane defined by T?"
 
 	# answer calculations
 	e1 = vertices[1]-vertices[0]
