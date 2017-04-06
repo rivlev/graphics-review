@@ -100,7 +100,7 @@ def expect_categorical(q, t):
 	return v
 
 def expect_yesno(q):
-	expect_boolish(q, {'y':True, 'n':False})
+	return expect_boolish(q, {'y':True, 'n':False})
 
 def expect_boolish(q, choices):
 	print(q)

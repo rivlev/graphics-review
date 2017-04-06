@@ -34,7 +34,7 @@ def lineEq(p0, p1):
 	return numpy.array((A, B, C)), lambda p : A*p[0] + B*p[1] + C
 
 def xIntersect(v0, v1, y):
-	A, B, C, f = lineEq(v0, v1)
+	(A, B, C), f = lineEq(v0, v1)
 	return (-B*y-C)/A
 
 def getBarycentricCoordinates(triangle, p):

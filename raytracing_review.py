@@ -35,15 +35,15 @@ def triangleq(ask=True):
 	q3 = "Is the intersection point in front of the viewpoint e?"
 	a3 = t > 0
 
-	rv.writeModule(dict(zip(('p','n','vertices','e','d','e1','e2','x','m','s','beta','r','gamma','t', px), (p, n, vertices, e, d, e1, e2, x, m, s, beta, r, gamma, t, px))))
+	rv.writeModule(dict(zip(('p','n','vertices','e','d','e1','e2','x','m','s','beta','r','gamma','t', 'px'), (p, n, vertices, e, d, e1, e2, x, m, s, beta, r, gamma, t, px))))
 
 	if ask:
 		print(q)
 		ua = rv.expect_vector(q1)
 		rv.check_answer(numpy.array(a1), ua, q1, "triangle intersection", rv.vector_check)
-		ua = rv.expect_yesno(q2)
+		ua = rv.expect_boolish(q2, {'y':True, 'n':False} )
 		rv.check_answer(a2, ua, q2, "triangle inside", rv.bool_check)
-		ua = rv.expect_yesno(q3)
+		ua = rv.expect_boolish(q3, {'y':True, 'n':False} )
 		rv.check_answer(a3, ua, q3, "ray distance", rv.bool_check)
 	else:
 		finalq = r"%s\\a) %s\\b) %s\\c) %s" % (q, q1, q2, q3)
@@ -75,7 +75,7 @@ def polygonq(ask=True):
 	a4 = gf.pointInPolygon(a3, vertices)
 
 	q5 = "Is the intersection point in front of the viewpoint e?"
-	a5 = a2 > t
+	a5 = a2 > 0
 
 	if ask:
 		ua1 = rv.expect_vector(q1)
