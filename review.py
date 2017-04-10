@@ -136,9 +136,15 @@ def mxstr(m):
 	"\n".join([" ".join(str(e) for e in elts) for elts in m])
 
 def combine(strs, skipFirst=True):
-	enum = ["%s) strs[i]" % ascii_lowercase[i] if not skipFirst or i > 0 else strs[i] for i in range(len(strs))]
+	strs = [tostring(s) for s in strs]
+	enum = ["%s) %s" % (ascii_lowercase[i], strs[i]) if not skipFirst or i > 0 else strs[i] for i in range(len(strs))]
 	return r'\\'.join(enum)
 
+def strict_order(a, b):
+	if a==b:
+		return a, b+1
+	if a > b:
+		return b, a
 
 def check_answer(a, ua, q, qt, eqfn=lax_equal):
 	s = 0

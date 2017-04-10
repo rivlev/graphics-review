@@ -15,7 +15,7 @@ def triangleq(ask=True):
 
 	q = "Triangle T has vertices p0=%s, p1=%s, p2=%s. Ray R has starting point e=%s and direction d=%s." % tuple(numpy.array_str(s) for s in tuple(vertices) + (e, d))
 
-	q1 = "What are the β and 𝛾 barycentric coordinates and the t distance along the ray of the intersection between R and the plane defined by T?"
+	q1 = "What are the beta and gamma barycentric coordinates and the t distance along the ray of the intersection between R and the plane defined by T?"
 
 	# answer calculations
 	e1 = vertices[1]-vertices[0]
@@ -46,8 +46,8 @@ def triangleq(ask=True):
 		ua = rv.expect_boolish(q3, {'y':True, 'n':False} )
 		rv.check_answer(a3, ua, q3, "ray distance", rv.bool_check)
 	else:
-		finalq = r"%s\\a) %s\\b) %s\\c) %s" % (q, q1, q2, q3)
-		finala = r"a) %s \\b) %s \\c) %s" % (numpy.array_str(a1), a2, a3)
+		finalq = rv.combine((q, q1, q2, q3), True)
+		finala = rv.combine((a1, a2, a3))
 		return finalq, finala, ()
 
 def polygonq(ask=True):
@@ -101,7 +101,7 @@ def lineq(ask=True):
 		ua = rv.expect_vector(q)
 		rv.check_answer(a, ua, q, "line equation", rv.vector_check)
 	else:
-		return q, a, ()
+		return q, rv.combine(a), ()
 
 def barycentricq(ask=True):
 	triangle = gf.triangle()
@@ -111,7 +111,7 @@ def barycentricq(ask=True):
 		p = gf.pointNotInPolygon(triangle)
 	bary = gf.getBarycentricCoordinates(triangle, p)
 	
-	q1 = "What are the barycentric coordinates of point P=%s with respect to triangle T with vertices\n %s?" % (numpy.array_str(p), '\n'.join(' '.join("%.2f" % v for v in vx) for vx in triangle))
+	q1 = "What are the barycentric coordinates of point P=%s with respect to triangle T with vertices\n %s?" % (numpy.array_str(p), '\n '.join(' '.join("%.2f" % v for v in vx) for vx in triangle))
 	a1 = bary
 
 	q2 = "Is point P inside or outside T?"
@@ -132,7 +132,7 @@ def barycentricq(ask=True):
 			ua3 = rv.expect_vector(q3)
 			rv.check_answer(a3, ua3, q3, "barycentric mixing", rv.vector_check)
 	else:
-		return rv.combine(q1, q2, q3), rv.combine(a1, a2, a3), ()
+		return rv.combine((q1, q2, q3)), rv.combine((a1, a2, a3)), ()
 
 def rayq(ask=True):
 	# camera frame
@@ -143,6 +143,8 @@ def rayq(ask=True):
 
 	# view volume
 	l, r, b, t = numpy.random.randint(-5, 5, 4)
+	l, r = rv.strict_order(l, r)
+	b, t = rv.strict_order(b, t)
 
 	# u, v, coordinates
 	i, j = numpy.random.randint(0, 5, 2)
@@ -178,12 +180,35 @@ def rayq(ask=True):
 	if ask:
 		print(q)
 		ua = rv.expect_vector("origin:")
-		rv.check_answer(ua, o, rv.vector_check, "ray casting: origin")
+		rv.check_answer(o, ua, q, "ray casting: origin", rv.vector_check)
 		ua = rv.expect_vector("direction:")
-		rv.check_answer(ua, d, rv.vector_check, "ray casting: direction")
+		rv.check_answer(d, ua, q, "ray casting: direction", rv.vector_check)
 	else:
-		return q, (o, d), ()
+		return q, rv.combine((o, d)), ()
 
+def raybbq(ask=True):
+	xmin, ymin, zmin, xmax, ymax, zmax = numpy.random.randint(-5, 5, 6)
+	xmin, xmax = rv.strict_order(xmin, xmax)
+	ymin, ymax = rv.strict_order(ymin, ymax)
+	zmin, zmax = rv.strict_order(zmin, zmax)
+
+	if rv.coinflip(0.5):
+		p = gf.pointInBox(xmin, ymin, zmin, xmax, ymax, zmax)
+	else:
+		p = gf.pointNotInBox(xmin, ymin, zmin, xmax, ymax, zmax)
+
+	e, d = gf.rayToPoint(p)
+
+	txmin = (xmin-e[0])/d[0]
+	tymin = (ymin-e[1])/d[1]
+	tzmin = (zmin-e[2])/d[2]
+	txmax = (xmax-e[0])/d[0]
+	tymax = (ymax-e[1])/d[1]
+	tzmax = (zmax-e[2])/d[2]
+
+	txmin, txmax = rv.strict_order(txmin, txmax)
+	tymin, tymax = rv.strict_order(tymin, tymax)
+	tzmin, tzmax = rv.strict_order(tzmin, tzmax)
 
 qtypes = {
 	'b':	(barycentricq, 'barycentric'),
@@ -191,7 +216,7 @@ qtypes = {
 	'p':	(polygonq, 'polygon intersection'),
 	'l':	(lineq, 'line equation'),
 	'r':	(rayq, 'ray casting'),
-#	's':	(sphereq, 'sphere intersection')
+#	'rbb':	(raybbq, 'ray bb intersection'),
 }
 
 if __name__ == "__main__":

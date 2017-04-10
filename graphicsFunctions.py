@@ -76,7 +76,9 @@ def pointOnPlane(p, n):
 
 def polygon(p, n, nv=5):
 	vertices = [pointOnPlane(p, n) for _ in range(nv)]
-	vertices.sort(key=lambda x: x[0])
+	for i in range(1, len(vertices)-1):
+		if (getNormal(vertices[i-1:]) != n).any():
+			vertices[i], vertices[i+1] = vertices[i+1], vertices[i]
 	return vertices
 
 def triangle():
@@ -117,3 +119,20 @@ def pointNotInPolygon(vertices):
 	ys = [v[1] for v in vertices]
 	y = min(ys) + numpy.random.random()*(max(ys)-min(ys))
 	return numpy.array((x,y,1))
+
+def numberInRange(l, h):
+	return numpy.random.randint(l+0.1, h)
+
+def numberNotInRange(l, h):
+	x = numpy.random.randint(-5, 5)
+	if rv.coinflip(0.5):
+		return l-x
+	else:
+		return h+x
+
+def pointInBox(xmin, ymin, zmin, xmax, ymax, zmax):
+	return numpy.array(numberInRange(n, x) for n, x in zip((xmin, ymin, zmin), (xmax, ymax, zmax)))
+
+def pointNotInBox(xmin, ymin, zmin, xmax, ymax, zmax):
+	return numpy.array(numberInRange(n, x) if rv.coinflip(0.5) else numberNotInRange(n, x) for n, x in zip((xmin, ymin, zmin), (xmax, ymax, zmax)))
+
