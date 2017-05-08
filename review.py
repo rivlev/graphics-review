@@ -145,6 +145,7 @@ def strict_order(a, b):
 		return a, b+1
 	if a > b:
 		return b, a
+	return a, b
 
 def check_answer(a, ua, q, qt, eqfn=lax_equal):
 	s = 0
@@ -216,7 +217,7 @@ def latex_clean(s):
     print(type(s))
     print(s)
 
-def latex_question(q, a, params):
+def latex_question(q, a):
   pstr = ''
   if 'green' in q:		# hacky: this tells us it is picture question
     pstr = r"\includegraphics[width=0.5\textwidth]{tmp}\\"
@@ -227,8 +228,8 @@ def generate_quiz(qtypes, n):
 		qfile.write(latex_preamble_str())
 		afile.write(latex_preamble_str())
 		for i in range(int(n)):
-			(q, a, params) = choose_random_from(list(qtypes.values()))[0](False)
-			qstr, astr = latex_question(q, a, params)
+			(q, a) = choose_random_from(list(qtypes.values()))[0](False)
+			qstr, astr = latex_question(q, a)
 			qfile.write(qstr)
 			qfile.write('\n')
 			afile.write(astr)
