@@ -207,7 +207,7 @@ def latex_clean(s):
     return str(round(float(s), 2))
   except:
     if isinstance(s, list) or isinstance(s, tuple):
-      return " OR ".join(s)
+      return " OR ".join(str(si) for si in s)
     if isinstance(s, numpy.ndarray):
       return list_to_latex(s)
     if isinstance(s, str):

@@ -27,7 +27,7 @@ def rayPlane(e, d, n=None, p=None, v=None):
 def pointOnRay(e, d, t):
 	return e + t*d
 
-def lineEq(p0, p1):
+def lineEq(p0, p1):	# todo remove z coordinate
 	A = p0[1]-p1[1]
 	B = p1[0]-p0[0]
 	C = p0[0]*p1[1] - p1[0]*p0[1]
@@ -136,3 +136,10 @@ def pointInBox(xmin, ymin, zmin, xmax, ymax, zmax):
 def pointNotInBox(xmin, ymin, zmin, xmax, ymax, zmax):
 	return numpy.array(numberInRange(n, x) if rv.coinflip(0.5) else numberNotInRange(n, x) for n, x in zip((xmin, ymin, zmin), (xmax, ymax, zmax)))
 
+def linearInterpolation(umin, umax, smin, smax, s):
+	return umin + (s-smin)/(smax-smin) * (umax - umin)
+
+def bilinearInterpolation(u, v, rs, rt, fn):
+	pu, pv = u*rs, v*rt
+	wu, wv = (p-numpy.floor(p) for p in (pu, pv))
+	return (1-wu) * (1-wv) * fn(numpy.floor(pu), numpy.floor(pv)) + (1-wu) * wv * fn(numpy.floor(pu), numpy.ceil(pv)) + wu * (1-wv) * fn(numpy.ceil(pu), numpy.floor(pv)) + wu * wv * fn(numpy.ceil(pu), numpy.ceil(pv))
