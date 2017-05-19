@@ -48,17 +48,27 @@ def pointInPolygon(p, vertices):
 	inside = False
 	e0 = vertices[-1]
 	y0 = e0[1] >= p[1]
+	i = 0
 	for e1 in vertices:
+		print(i)
+		print("Previous vertex above py: %r" % y0)
 		y1 = e1[1] >= p[1]
+		print("Current vertex above py: %r" % y1)
 		if y0 != y1:
 			if e0[0] > p[0] and e1[0]> p[0]:
 				inside = not inside
+				print("both on right: flipping inside to %r" % inside)
 			elif e0[0] < p[0] and e1[0] < p[0]:
+				print("both on left: skipping")
 				continue
 			else:
+				print("checking x intersection")
 				if xIntersect(e0, e1, p[1]) > p[0]:
 					inside = not inside
+					print("x intersection is on right of px: flipping inside to %r" % inside)
+		e0 = e1
 		y0 = y1
+		i = i+1
 	return inside
 
 def pointOnPlane(p, n):
